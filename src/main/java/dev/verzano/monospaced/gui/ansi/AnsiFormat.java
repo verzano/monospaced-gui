@@ -1,4 +1,4 @@
-package com.verzano.monospaced.gui.ansi;
+package dev.verzano.monospaced.gui.ansi;
 
 import java.util.Arrays;
 import java.util.HashSet;

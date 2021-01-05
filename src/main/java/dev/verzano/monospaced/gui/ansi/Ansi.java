@@ -1,4 +1,4 @@
-package com.verzano.monospaced.gui.ansi;
+package dev.verzano.monospaced.gui.ansi;
 
 public class Ansi {
   private Ansi() {}
