@@ -7,43 +7,45 @@ import dev.verzano.monospaced.gui.task.Task;
 import static dev.verzano.monospaced.gui.task.Task.NULL_TASK;
 
 public abstract class Floater extends Enclosure {
-  public static final Floater NULL_FLOATER = new Floater() {};
-  private Task disposeTask = NULL_TASK;
+    public static final Floater NULL_FLOATER = new Floater() {
+    };
+    private Task disposeTask = NULL_TASK;
 
-  public Floater() {}
+    public Floater() {
+    }
 
-  public void setDisposeTask(Task disposeTask) {
-    this.disposeTask = disposeTask;
-  }
+    public void setDisposeTask(Task disposeTask) {
+        this.disposeTask = disposeTask;
+    }
 
-  public void display() {
-    MonospacedGui.setFloater(this);
-    reprint();
-  }
+    public void display() {
+        MonospacedGui.setFloater(this);
+        reprint();
+    }
 
-  public void dispose() {
-    MonospacedGui.removeFloater();
-    disposeTask.fire();
-    MonospacedGui.reprint();
-  }
+    public void dispose() {
+        MonospacedGui.removeFloater();
+        disposeTask.fire();
+        MonospacedGui.reprint();
+    }
 
-  @Override
-  public int getHeight() {
-    return super.getNeededHeight();
-  }
+    @Override
+    public int getHeight() {
+        return super.getNeededHeight();
+    }
 
-  @Override
-  public int getWidth() {
-    return super.getNeededContentWidth();
-  }
+    @Override
+    public int getWidth() {
+        return super.getNeededContentWidth();
+    }
 
-  @Override
-  public final int getX() {
-    return MonospacedGui.getWidth()/2 - getWidth()/2;
-  }
+    @Override
+    public final int getX() {
+        return MonospacedGui.getWidth() / 2 - getWidth() / 2;
+    }
 
-  @Override
-  public final int getY() {
-    return MonospacedGui.getHeight()/2 - getHeight()/2;
-  }
+    @Override
+    public final int getY() {
+        return MonospacedGui.getHeight() / 2 - getHeight() / 2;
+    }
 }

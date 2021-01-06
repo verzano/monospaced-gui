@@ -1,3 +1,4 @@
 package dev.verzano.monospaced.gui.container;
 
-public abstract class ContainerOptions {}
+public abstract class ContainerOptions {
+}
