@@ -1,10 +1,13 @@
 package dev.verzano.monospaced.gui;
 
 import dev.verzano.monospaced.core.ansi.ControlSequence;
+import dev.verzano.monospaced.core.constant.Keys;
 import dev.verzano.monospaced.core.metric.Point;
 import dev.verzano.monospaced.core.metric.Size;
 import dev.verzano.monospaced.gui.container.floor.Floor;
 import dev.verzano.monospaced.gui.container.floor.FloorOptions;
+import dev.verzano.monospaced.gui.debug.Logger;
+import dev.verzano.monospaced.gui.debug.LoggerService;
 import dev.verzano.monospaced.gui.floater.Floater;
 import dev.verzano.monospaced.gui.task.print.PrintTask;
 import dev.verzano.monospaced.gui.widget.Widget;
@@ -25,14 +28,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 // TODO allow resize events to be grouped together
 // TODO foreground/background can be inherited from parent
 public class MonospacedGui {
+    private static final Logger log = LoggerService.getLogger(MonospacedGui.class);
+
     private static final AtomicBoolean run = new AtomicBoolean(true);
     private static final BlockingDeque<PrintTask> printTaskQueue = new LinkedBlockingDeque<>();
     private static final Terminal terminal;
-    private static Floor floor = new Floor();
+    private static final Floor floor = new Floor();
     private static Floater floater = Floater.NULL_FLOATER;
     private static Widget focusedWidget = Widget.NULL_WIDGET;
     private static final Thread keyActionThread = new Thread(MonospacedGui::keyActionLoop, "Key Action");
-    private static Size size;
+    private static final Size size;
     private static final Thread printingThread = new Thread(MonospacedGui::printingLoop, "Printing");
     private static final Thread resizingThread = new Thread(MonospacedGui::resizingLoop, "Resizing");
 
@@ -55,6 +60,10 @@ public class MonospacedGui {
     }
 
     private MonospacedGui() {
+    }
+
+    public static void enableLogging() {
+        LoggerService.enable();
     }
 
     public static Floater getFloater() {
@@ -96,18 +105,19 @@ public class MonospacedGui {
             while (run.get()) {
                 var key = terminal.reader().read(100);
                 switch (key) {
-                    case '\u00B1': // TODO this is kinda ugly isn't it
-                        switch (terminal.reader().read()) {
-                            case '[':
-                                focusedWidget.fireKeyActions(ControlSequence.CSI + (char) terminal.reader().read());
-                                break;
+                    case Keys.ESC -> {
+                        if (terminal.reader().read() == '[') {
+                            var sequence = ControlSequence.CSI + (char) terminal.reader().read();
+                            log.log("Registered control sequence: " + sequence);
+                            focusedWidget.fireKeyActions(sequence);
                         }
-                        break;
-                    case -2:
-                        break;
-                    default:
+                    }
+                    case -2 -> {}
+                    default -> {
+                        // TODO convert this value better (for printable chars)
+                        log.log("Registered key press: " + key);
                         focusedWidget.fireKeyActions((char) key + "");
-                        break;
+                    }
                 }
             }
         } catch (IOException e) {

@@ -17,14 +17,16 @@ java {
 }
 
 dependencies {
-    implementation("net.java.dev.jna:jna:5.6.0")
-    implementation("org.jline:jline:3.18.0")
-    implementation("dev.verzano.monospaced:monospaced-core:0.1.0")
+    api("dev.verzano.monospaced", "monospaced-core", "0.1.0")
+
+    api("net.java.dev.jna", "jna", "5.6.0")
+
+    api("org.jline", "jline", "3.18.0")
 
     // Test Dependencies
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.6.0")
+    testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.6.0")
+    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.6.0")
 }
 
 publishing {

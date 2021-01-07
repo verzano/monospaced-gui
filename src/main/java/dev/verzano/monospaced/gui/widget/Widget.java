@@ -133,6 +133,10 @@ public abstract class Widget {
         this.showLabel = showLabel;
     }
 
+    public void addKeyAction(char key, Task action) {
+        addKeyAction(String.valueOf(key), action);
+    }
+
     public void addKeyAction(String key, Task action) {
         var tasks = keyActionsMap.getOrDefault(key, new HashSet<>());
         tasks.add(action);
