@@ -1,5 +1,7 @@
 package dev.verzano.monospaced.gui.widget.text;
 
+import static dev.verzano.monospaced.core.ansi.sgr.SgrFormat.normalSgrFormat;
+
 import dev.verzano.monospaced.core.ansi.sgr.Attribute;
 import dev.verzano.monospaced.core.constant.Orientation;
 import dev.verzano.monospaced.core.constant.Position;
@@ -7,14 +9,17 @@ import dev.verzano.monospaced.gui.MonospacedGui;
 import dev.verzano.monospaced.gui.util.PrintUtils;
 import dev.verzano.monospaced.gui.widget.Widget;
 
-import static dev.verzano.monospaced.core.ansi.sgr.SgrFormat.normalSgrFormat;
-
 public class TextWidget extends Widget {
-    private String text = "";
-    private Orientation orientation = Orientation.HORIZONTAL;
-    private Position textPosition = Position.LEFT;
+    private String text;
+    private Orientation orientation;
+    private Position textPosition;
 
     public TextWidget() {
+        this("", Orientation.HORIZONTAL, Position.LEFT);
+    }
+
+    public TextWidget(String text) {
+        this(text, Orientation.HORIZONTAL, Position.LEFT);
     }
 
     public TextWidget(String text, Orientation orientation, Position textPosition) {
@@ -114,9 +119,7 @@ public class TextWidget extends Widget {
                     }
                 }
             }
-            case HORIZONTAL -> {
-                printHorizontal();
-            }
+            case HORIZONTAL -> printHorizontal();
         }
     }
 }
