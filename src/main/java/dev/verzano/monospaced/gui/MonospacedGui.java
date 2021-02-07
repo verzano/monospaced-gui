@@ -1,6 +1,10 @@
 package dev.verzano.monospaced.gui;
 
-import dev.verzano.monospaced.core.ansi.ControlSequence;
+import static dev.verzano.monospaced.core.ansi.ControlSequences.CSI;
+import static dev.verzano.monospaced.core.ansi.ControlSequences.CUP;
+import static dev.verzano.monospaced.core.ansi.ControlSequences.HCU;
+import static dev.verzano.monospaced.core.ansi.ControlSequences.SCU;
+
 import dev.verzano.monospaced.core.constant.Keys;
 import dev.verzano.monospaced.core.metric.Point;
 import dev.verzano.monospaced.core.metric.Size;
@@ -10,9 +14,9 @@ import dev.verzano.monospaced.gui.debug.Logger;
 import dev.verzano.monospaced.gui.debug.LoggerService;
 import dev.verzano.monospaced.gui.floater.Floater;
 import dev.verzano.monospaced.gui.task.print.PrintTask;
+import dev.verzano.monospaced.gui.terminal.JlineTerminal;
+import dev.verzano.monospaced.gui.terminal.Terminal;
 import dev.verzano.monospaced.gui.widget.Widget;
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingDeque;
@@ -32,34 +36,27 @@ public class MonospacedGui {
 
     private static final AtomicBoolean run = new AtomicBoolean(true);
     private static final BlockingDeque<PrintTask> printTaskQueue = new LinkedBlockingDeque<>();
-    private static final Terminal terminal;
+    private static Terminal terminal; // TODO would be nice if it was final...
     private static final Floor floor = new Floor();
     private static Floater floater = Floater.NULL_FLOATER;
     private static Widget focusedWidget = Widget.NULL_WIDGET;
     private static final Thread keyActionThread = new Thread(MonospacedGui::keyActionLoop, "Key Action");
-    private static final Size size;
+    private static Size size; // TODO would be nice if it was final...
     private static final Thread printingThread = new Thread(MonospacedGui::printingLoop, "Printing");
     private static final Thread resizingThread = new Thread(MonospacedGui::resizingLoop, "Resizing");
 
-    static {
-        try {
-            terminal = TerminalBuilder.terminal();
-            terminal.enterRawMode();
-            terminal.echo(false);
-
-            size = new Size(terminal.getWidth(), terminal.getHeight());
-
-            printingThread.start();
-            keyActionThread.start();
-            resizingThread.start();
-
-            printTaskQueue.addFirst(() -> print(ControlSequence.HCU));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    private MonospacedGui() {
     }
 
-    private MonospacedGui() {
+    public static void init(Terminal terminal) {
+        MonospacedGui.terminal = terminal;
+        size = terminal.getSize();
+
+        printingThread.start();
+        keyActionThread.start();
+        resizingThread.start();
+
+        printTaskQueue.addFirst(() -> print(HCU.apply()));
     }
 
     public static void enableLogging() {
@@ -86,7 +83,7 @@ public class MonospacedGui {
         String emptyLine = new String(new char[size.getWidth()]).replace("\0", " ");
         for (int row = 1; row <= size.getHeight(); row++) {
             move(1, row);
-            terminal.writer().print(emptyLine);
+            terminal.write(emptyLine);
         }
         move(1, 1);
         terminal.flush();
@@ -103,11 +100,11 @@ public class MonospacedGui {
     private static void keyActionLoop() {
         try {
             while (run.get()) {
-                var key = terminal.reader().read(100);
+                var key = terminal.read();
                 switch (key) {
                     case Keys.ESC -> {
-                        if (terminal.reader().read() == '[') {
-                            var sequence = ControlSequence.CSI + (char) terminal.reader().read();
+                        if (terminal.read() == '[') {
+                            var sequence = CSI + terminal.read();
                             log.log("Registered control sequence: " + sequence);
                             focusedWidget.fireKeyActions(sequence);
                         }
@@ -129,7 +126,7 @@ public class MonospacedGui {
         if (Thread.currentThread() != printingThread) {
             printTaskQueue.add(() -> move(x, y));
         } else {
-            terminal.writer().printf(ControlSequence.CUP, y, x);
+            terminal.writef(CUP.apply(y, x));
         }
     }
 
@@ -137,7 +134,7 @@ public class MonospacedGui {
         if (Thread.currentThread() != printingThread) {
             printTaskQueue.add(() -> print(s));
         } else {
-            terminal.writer().print(s);
+            terminal.write(s);
         }
     }
 
@@ -147,7 +144,7 @@ public class MonospacedGui {
         while (run.get()) {
             try {
                 printTaskQueue.take().print();
-                terminal.writer().flush();
+                terminal.flush();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -161,7 +158,7 @@ public class MonospacedGui {
             printTaskQueue.add(() -> printn(s, n));
         } else {
             for (int i = 0; i < n; i++) {
-                terminal.writer().print(s);
+                terminal.write(s);
             }
         }
     }
@@ -222,7 +219,7 @@ public class MonospacedGui {
 
     public static void shutdown() {
         new Thread(() -> {
-            printTaskQueue.addFirst(() -> print(ControlSequence.SCU));
+            printTaskQueue.addFirst(() -> print(SCU.apply()));
             printTaskQueue.addFirst(() -> run.set(false));
 
             try {

@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import static dev.verzano.monospaced.core.constant.CardinalDirection.*;
 
-
 public class Enclosure extends Container<EnclosureOptions> {
     // TODO a bidi map would be noice
     private final Map<Widget, EnclosureOptions> optionsMap = new HashMap<>();

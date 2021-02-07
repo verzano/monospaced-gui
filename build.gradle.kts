@@ -18,10 +18,8 @@ java {
 
 dependencies {
     api("dev.verzano.monospaced", "monospaced-core", "0.1.0")
-
     api("net.java.dev.jna", "jna", "5.6.0")
-
-    api("org.jline", "jline", "3.18.0")
+    api("org.jline", "jline", "3.19.0")
 
     // Test Dependencies
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.6.0")

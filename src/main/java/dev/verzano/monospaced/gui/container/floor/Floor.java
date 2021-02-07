@@ -14,6 +14,10 @@ public class Floor extends Container<FloorOptions> {
     private FloorOptions options = null;
     private Widget widget = NULL_WIDGET;
 
+    public Floor() {
+
+    }
+
     @Override
     public void addWidgetInternal(Widget widget, FloorOptions options) {
         if (this.widget != NULL_WIDGET) {
