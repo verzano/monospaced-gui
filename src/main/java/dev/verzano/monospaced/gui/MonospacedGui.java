@@ -17,7 +17,6 @@ import dev.verzano.monospaced.gui.task.print.PrintTask;
 import dev.verzano.monospaced.gui.terminal.JlineTerminal;
 import dev.verzano.monospaced.gui.terminal.Terminal;
 import dev.verzano.monospaced.gui.widget.Widget;
-
 import java.io.IOException;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -37,7 +36,7 @@ public class MonospacedGui {
     private static final AtomicBoolean run = new AtomicBoolean(true);
     private static final BlockingDeque<PrintTask> printTaskQueue = new LinkedBlockingDeque<>();
     private static Terminal terminal; // TODO would be nice if it was final...
-    private static final Floor floor = new Floor();
+    private static final Floor floor = Floor.getInstance();
     private static Floater floater = Floater.NULL_FLOATER;
     private static Widget focusedWidget = Widget.NULL_WIDGET;
     private static final Thread keyActionThread = new Thread(MonospacedGui::keyActionLoop, "Key Action");
@@ -46,6 +45,10 @@ public class MonospacedGui {
     private static final Thread resizingThread = new Thread(MonospacedGui::resizingLoop, "Resizing");
 
     private MonospacedGui() {
+    }
+
+    public static void init() throws IOException {
+        init(new JlineTerminal());
     }
 
     public static void init(Terminal terminal) {
@@ -65,6 +68,10 @@ public class MonospacedGui {
 
     public static Floater getFloater() {
         return floater;
+    }
+
+    public static Floor getFloor() {
+        return floor;
     }
 
     public static Widget getFocusedWidget() {

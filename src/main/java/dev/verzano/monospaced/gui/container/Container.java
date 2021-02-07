@@ -3,7 +3,6 @@ package dev.verzano.monospaced.gui.container;
 import dev.verzano.monospaced.core.metric.Point;
 import dev.verzano.monospaced.core.metric.Size;
 import dev.verzano.monospaced.gui.widget.Widget;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,7 +11,7 @@ import java.util.Map;
 public abstract class Container<T extends ContainerOptions> extends Widget {
     public static final Container<ContainerOptions> NULL_CONTAINER = new Container<>() {
         @Override
-        public void addWidgetInternal(Widget widget, ContainerOptions options) {
+        protected void addWidgetInternal(Widget widget, ContainerOptions options) {
         }
 
         @Override
@@ -41,11 +40,11 @@ public abstract class Container<T extends ContainerOptions> extends Widget {
         }
 
         @Override
-        public void removeWidgetInternal(Widget widget) {
+        protected void removeWidgetInternal(Widget widget) {
         }
 
         @Override
-        public void removeWidgetsInternal() {
+        protected void removeWidgetsInternal() {
         }
 
         @Override
@@ -63,7 +62,7 @@ public abstract class Container<T extends ContainerOptions> extends Widget {
     private final Map<Widget, Size> widgetSizes = new HashMap<>();
     private final Map<Widget, Point> widgetLocations = new HashMap<>();
 
-    public abstract void addWidgetInternal(Widget widget, T options);
+    protected abstract void addWidgetInternal(Widget widget, T options);
 
     public abstract int calculateWidgetHeight(Widget widget);
 
@@ -75,9 +74,9 @@ public abstract class Container<T extends ContainerOptions> extends Widget {
 
     public abstract Collection<Widget> getContainedWidgets();
 
-    public abstract void removeWidgetInternal(Widget widget);
+    protected abstract void removeWidgetInternal(Widget widget);
 
-    public abstract void removeWidgetsInternal();
+    protected abstract void removeWidgetsInternal();
 
     public Container() {
     }

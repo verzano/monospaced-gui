@@ -1,16 +1,19 @@
 package dev.verzano.monospaced.gui.container.enclosure;
 
+import static dev.verzano.monospaced.core.constant.CardinalDirection.CENTER;
+import static dev.verzano.monospaced.core.constant.CardinalDirection.EAST;
+import static dev.verzano.monospaced.core.constant.CardinalDirection.NORTH;
+import static dev.verzano.monospaced.core.constant.CardinalDirection.SOUTH;
+import static dev.verzano.monospaced.core.constant.CardinalDirection.WEST;
+
 import dev.verzano.monospaced.core.constant.CardinalDirection;
 import dev.verzano.monospaced.gui.container.Container;
 import dev.verzano.monospaced.gui.widget.Widget;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static dev.verzano.monospaced.core.constant.CardinalDirection.*;
 
 public class Enclosure extends Container<EnclosureOptions> {
     // TODO a bidi map would be noice
@@ -22,7 +25,7 @@ public class Enclosure extends Container<EnclosureOptions> {
     }
 
     @Override
-    public void addWidgetInternal(Widget widget, EnclosureOptions options) {
+    protected void addWidgetInternal(Widget widget, EnclosureOptions options) {
         Widget oldWidget = widgetMap.get(options.getPosition());
         if (oldWidget != NULL_WIDGET) {
             removeWidget(oldWidget);
@@ -72,13 +75,13 @@ public class Enclosure extends Container<EnclosureOptions> {
     }
 
     @Override
-    public void removeWidgetInternal(Widget widget) {
+    protected void removeWidgetInternal(Widget widget) {
         EnclosureOptions options = optionsMap.remove(widget);
         widgetMap.remove(options.getPosition());
     }
 
     @Override
-    public void removeWidgetsInternal() {
+    protected void removeWidgetsInternal() {
         optionsMap.clear();
         Arrays.stream(CardinalDirection.values()).forEach(cd -> widgetMap.put(cd, NULL_WIDGET));
     }

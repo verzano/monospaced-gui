@@ -1,25 +1,29 @@
 package dev.verzano.monospaced.gui.container.floor;
 
-import dev.verzano.monospaced.gui.MonospacedGui;
-import dev.verzano.monospaced.gui.container.Container;
-import dev.verzano.monospaced.gui.widget.Widget;
-
-import java.util.Collection;
-import java.util.Collections;
-
 import static dev.verzano.monospaced.core.metric.Size.FILL_CONTAINER;
 import static dev.verzano.monospaced.core.metric.Size.FILL_NEEDED;
 
+import dev.verzano.monospaced.gui.MonospacedGui;
+import dev.verzano.monospaced.gui.container.Container;
+import dev.verzano.monospaced.gui.widget.Widget;
+import java.util.Collection;
+import java.util.Collections;
+
 public class Floor extends Container<FloorOptions> {
+    private static final Floor INSTANCE = new Floor();
+
     private FloorOptions options = null;
     private Widget widget = NULL_WIDGET;
 
-    public Floor() {
+    private Floor() {
+    }
 
+    public static Floor getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public void addWidgetInternal(Widget widget, FloorOptions options) {
+    protected void addWidgetInternal(Widget widget, FloorOptions options) {
         if (this.widget != NULL_WIDGET) {
             removeWidget(this.widget);
         }
@@ -61,13 +65,13 @@ public class Floor extends Container<FloorOptions> {
     }
 
     @Override
-    public void removeWidgetInternal(Widget widget) {
+    protected void removeWidgetInternal(Widget widget) {
         this.widget = NULL_WIDGET;
         options = null;
     }
 
     @Override
-    public void removeWidgetsInternal() {
+    protected void removeWidgetsInternal() {
         widget = NULL_WIDGET;
         options = null;
     }

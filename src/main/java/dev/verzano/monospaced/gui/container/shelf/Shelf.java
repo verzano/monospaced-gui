@@ -4,8 +4,11 @@ import dev.verzano.monospaced.core.constant.Orientation;
 import dev.verzano.monospaced.core.metric.Size;
 import dev.verzano.monospaced.gui.container.Container;
 import dev.verzano.monospaced.gui.widget.Widget;
-
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class Shelf extends Container<ShelfOptions> {
     private final List<Widget> widgetStack = new LinkedList<>();
@@ -27,7 +30,7 @@ public class Shelf extends Container<ShelfOptions> {
     }
 
     @Override
-    public void addWidgetInternal(Widget widget, ShelfOptions options) {
+    protected void addWidgetInternal(Widget widget, ShelfOptions options) {
         optionsMap.put(widget, options);
         widgetStack.add(widget);
     }
@@ -90,13 +93,13 @@ public class Shelf extends Container<ShelfOptions> {
     }
 
     @Override
-    public void removeWidgetInternal(Widget widget) {
+    protected void removeWidgetInternal(Widget widget) {
         optionsMap.remove(widget);
         widgetStack.remove(widget);
     }
 
     @Override
-    public void removeWidgetsInternal() {
+    protected void removeWidgetsInternal() {
         optionsMap.clear();
         widgetStack.clear();
     }

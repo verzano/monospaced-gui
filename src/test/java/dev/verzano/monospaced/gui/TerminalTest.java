@@ -6,4 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(TerminalExtension.class)
 public class TerminalTest {
     protected MockTerminal terminal = MockTerminal.getInstance();
+
+    protected void setTerminalSize(int width, int height) {
+        terminal.setWidth(width);
+        terminal.setHeight(height);
+    }
 }
