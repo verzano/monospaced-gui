@@ -27,6 +27,14 @@ class TextWidgetTest {
         };
     }
 
+    static String[][] textData() {
+        return new String[][] {
+                {"before", "after"},
+                {"", "looooooooong"},
+                {"looooooooong", ""}
+        };
+    }
+
     @Test
     void defaultValues() {
         var widget = new TextWidget();
@@ -63,5 +71,32 @@ class TextWidgetTest {
                 () -> assertEquals(expectedWidth, widget.getNeededContentWidth()),
                 () -> assertEquals(expectedHeight, widget.getNeededContentHeight())
         );
+    }
+
+    @ParameterizedTest
+    @MethodSource("textData")
+    void settingTextOnHorizontalChangesNeededContentSize(String before, String after) {
+        var widget = new TextWidget(before, Orientation.HORIZONTAL, Position.LEFT);
+
+        assertEquals(before.length(), widget.getNeededContentWidth());
+        assertEquals(1, widget.getNeededContentHeight());
+
+        widget.setText(after);
+
+        assertEquals(after.length(), widget.getNeededContentWidth());
+        assertEquals(1, widget.getNeededContentHeight());
+    }
+
+    @ParameterizedTest
+    @MethodSource("textData")
+    void settingTextOnVerticalChangesNeededContentSize(String before, String after) {
+        var widget = new TextWidget(before, Orientation.VERTICAL, Position.LEFT);
+
+        assertEquals(1, widget.getNeededContentWidth());
+        assertEquals(before.length(), widget.getNeededContentHeight());
+
+        widget.setText(after);
+        assertEquals(1, widget.getNeededContentWidth());
+        assertEquals(after.length(), widget.getNeededContentHeight());
     }
 }
