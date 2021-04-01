@@ -1,12 +1,11 @@
 package dev.verzano.monospaced.gui.widget.text;
 
-import static dev.verzano.monospaced.core.ansi.sgr.SgrFormat.normalSgrFormat;
+import static dev.verzano.monospaced.gui.util.PrintUtils.getRowForText;
 
 import dev.verzano.monospaced.core.ansi.sgr.Attribute;
 import dev.verzano.monospaced.core.constant.Orientation;
 import dev.verzano.monospaced.core.constant.Position;
 import dev.verzano.monospaced.gui.MonospacedGui;
-import dev.verzano.monospaced.gui.util.PrintUtils;
 import dev.verzano.monospaced.gui.widget.Widget;
 
 public class TextWidget extends Widget {
@@ -55,11 +54,34 @@ public class TextWidget extends Widget {
         this.textPosition = textPosition;
     }
 
+    private void printVertical() {
+        switch (textPosition) {
+            case TOP_LEFT, TOP, TOP_RIGHT -> {
+                var i = 0;
+                for (; i < text.length(); i++) {
+                    MonospacedGui.move(getContentX(), getContentY() + i);
+                    MonospacedGui.print(getRowForText(text.charAt(i) + "", textPosition, getSgrFormatPrefix(), getWidth()));
+                }
+
+                for (; i < getContentHeight(); i++) {
+                    MonospacedGui.move(getContentX(), getContentY() + i);
+                    MonospacedGui.print(getEmptyContentRow());
+                }
+            }
+            case LEFT, CENTER, RIGHT -> {
+
+            }
+            case BOTTOM_LEFT, BOTTOM, BOTTOM_RIGHT -> {
+
+            }
+        }
+    }
+
     private void printHorizontal() {
         switch (textPosition) {
             case TOP_LEFT, TOP, TOP_RIGHT -> {
                 MonospacedGui.move(getContentX(), getContentY());
-                MonospacedGui.print(PrintUtils.getRowForText(text, textPosition, getSgrFormatPrefix(), getWidth()));
+                MonospacedGui.print(getRowForText(text, textPosition, getSgrFormatPrefix(), getWidth()));
                 for (var i = 1; i < getContentHeight(); i++) {
                     MonospacedGui.move(getContentX(), getContentY() + i);
                     MonospacedGui.print(getEmptyContentRow());
@@ -70,7 +92,7 @@ public class TextWidget extends Widget {
                 for (var i = 0; i < getContentHeight(); i++) {
                     MonospacedGui.move(getContentX(), getContentY() + i);
                     if (i == middleRow) {
-                        MonospacedGui.print(PrintUtils.getRowForText(text, textPosition, getSgrFormatPrefix(), getWidth()));
+                        MonospacedGui.print(getRowForText(text, textPosition, getSgrFormatPrefix(), getWidth()));
                     } else {
                         MonospacedGui.print(getEmptyContentRow());
                     }
@@ -82,7 +104,7 @@ public class TextWidget extends Widget {
                     MonospacedGui.print(getEmptyContentRow());
                     MonospacedGui.move(getContentX(), getContentY() + i);
                 }
-                MonospacedGui.print(PrintUtils.getRowForText(text, textPosition, getSgrFormatPrefix(), getWidth()));
+                MonospacedGui.print(getRowForText(text, textPosition, getSgrFormatPrefix(), getWidth()));
             }
         }
     }
@@ -106,19 +128,7 @@ public class TextWidget extends Widget {
     @Override
     public void printContent() {
         switch (orientation) {
-            // TODO make vertical printContent correctly
-            case VERTICAL -> {
-                MonospacedGui.move(getContentX(), getContentY());
-                String toPrint = text;
-                for (int row = 0; row < getContentHeight(); row++) {
-                    MonospacedGui.move(getContentX(), getContentY() + row);
-                    if (row < toPrint.length()) {
-                        MonospacedGui.print(getSgrFormatPrefix() + toPrint.charAt(row) + normalSgrFormat());
-                    } else {
-                        MonospacedGui.print(getSgrFormatPrefix() + " " + normalSgrFormat());
-                    }
-                }
-            }
+            case VERTICAL -> printVertical();
             case HORIZONTAL -> printHorizontal();
         }
     }

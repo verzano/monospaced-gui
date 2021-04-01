@@ -7,11 +7,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class Container<T extends ContainerOptions> extends Widget {
     public static final Container<ContainerOptions> NULL_CONTAINER = new Container<>() {
         @Override
-        protected void addWidgetInternal(Widget widget, ContainerOptions options) {
+        protected void addWidgetInternal(Widget widget, @NotNull ContainerOptions options) {
         }
 
         @Override
@@ -62,7 +63,7 @@ public abstract class Container<T extends ContainerOptions> extends Widget {
     private final Map<Widget, Size> widgetSizes = new HashMap<>();
     private final Map<Widget, Point> widgetLocations = new HashMap<>();
 
-    protected abstract void addWidgetInternal(Widget widget, T options);
+    protected abstract void addWidgetInternal(Widget widget, @NotNull T options);
 
     public abstract int calculateWidgetHeight(Widget widget);
 
@@ -81,7 +82,7 @@ public abstract class Container<T extends ContainerOptions> extends Widget {
     public Container() {
     }
 
-    public void addWidget(Widget widget, T options) {
+    public void addWidget(Widget widget, @NotNull T options) {
         widgetSizes.put(widget, new Size(0, 0));
         widgetLocations.put(widget, new Point(0, 0));
         widget.setContainer(this);

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 public class Shelf extends Container<ShelfOptions> {
     private final List<Widget> widgetStack = new LinkedList<>();
@@ -30,7 +31,7 @@ public class Shelf extends Container<ShelfOptions> {
     }
 
     @Override
-    protected void addWidgetInternal(Widget widget, ShelfOptions options) {
+    protected void addWidgetInternal(Widget widget, @NotNull ShelfOptions options) {
         optionsMap.put(widget, options);
         widgetStack.add(widget);
     }

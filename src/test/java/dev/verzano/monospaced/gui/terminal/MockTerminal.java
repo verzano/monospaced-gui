@@ -3,67 +3,57 @@ package dev.verzano.monospaced.gui.terminal;
 import dev.verzano.monospaced.core.metric.Size;
 import java.io.IOException;
 import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class MockTerminal implements Terminal {
     private static final MockTerminal INSTANCE = new MockTerminal();
 
-    private final Size size = new Size(0, 0);
     private final BlockingDeque<Integer> readBuffer = new LinkedBlockingDeque<>();
-    private final List<Character> writeBuffer = new LinkedList<>();
+    private final TerminalGrid grid = TerminalGrid.getInstance();
+
+    private MockTerminal() {
+
+    }
 
     public static MockTerminal getInstance() {
         return INSTANCE;
     }
 
     public void reset() {
-        setWidth(0);
-        setHeight(0);
+        grid.reset();
         readBuffer.clear();
-        writeBuffer.clear();
     }
 
     public Deque<Integer> getReadBuffer() {
         return readBuffer;
     }
 
-    public List<Character> getWriteBuffer() {
-        return writeBuffer;
+    public TerminalGrid getGrid() {
+        return grid;
     }
 
     @Override
     public int getWidth() {
-        return size.getWidth();
-    }
-
-    public void setWidth(int width) {
-        size.setWidth(width);
+        return grid.getWidth();
     }
 
     @Override
     public int getHeight() {
-        return size.getHeight();
-    }
-
-    public void setHeight(int height) {
-        size.setHeight(height);
+        return grid.getHeight();
     }
 
     @Override
     public Size getSize() {
-        return size;
+        return grid.getSize();
     }
 
-    public void setSize(Size size) {
-        setWidth(size.getWidth());
-        setHeight(size.getHeight());
+    public void setSize(int width, int height) {
+        grid.setSize(width, height);
     }
 
     @Override
-    public int read() throws IOException {
+    public int read() {
         try {
             return readBuffer.takeFirst();
         } catch (InterruptedException e) {
@@ -74,7 +64,7 @@ public class MockTerminal implements Terminal {
     @Override
     public void write(String s) {
         for (var c : s.toCharArray()) {
-            writeBuffer.add(c);
+            grid.write(c);
         }
     }
 

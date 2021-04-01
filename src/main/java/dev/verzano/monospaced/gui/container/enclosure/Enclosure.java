@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
 
 public class Enclosure extends Container<EnclosureOptions> {
     // TODO a bidi map would be noice
@@ -25,7 +26,7 @@ public class Enclosure extends Container<EnclosureOptions> {
     }
 
     @Override
-    protected void addWidgetInternal(Widget widget, EnclosureOptions options) {
+    protected void addWidgetInternal(Widget widget, @NotNull EnclosureOptions options) {
         Widget oldWidget = widgetMap.get(options.getPosition());
         if (oldWidget != NULL_WIDGET) {
             removeWidget(oldWidget);

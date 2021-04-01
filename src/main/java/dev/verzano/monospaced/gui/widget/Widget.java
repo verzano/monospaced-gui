@@ -1,5 +1,8 @@
 package dev.verzano.monospaced.gui.widget;
 
+import static dev.verzano.monospaced.core.ansi.sgr.SgrFormat.normalSgrFormat;
+import static dev.verzano.monospaced.gui.util.PrintUtils.getRowForText;
+
 import dev.verzano.monospaced.core.ansi.sgr.Attribute;
 import dev.verzano.monospaced.core.ansi.sgr.Background;
 import dev.verzano.monospaced.core.ansi.sgr.Foreground;
@@ -11,11 +14,11 @@ import dev.verzano.monospaced.gui.MonospacedGui;
 import dev.verzano.monospaced.gui.container.Container;
 import dev.verzano.monospaced.gui.container.ContainerOptions;
 import dev.verzano.monospaced.gui.task.Task;
-import dev.verzano.monospaced.gui.util.PrintUtils;
-
-import java.util.*;
-
-import static dev.verzano.monospaced.core.ansi.sgr.SgrFormat.normalSgrFormat;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 // TODO make this thread safe
 // padding is the space between the content and the border/label
@@ -259,6 +262,7 @@ public abstract class Widget {
         return MonospacedGui.getFocusedWidget() == this;
     }
 
+    // TODO maybe this should be protected? nothing should call it directly for safety
     public final void print() {
         for (var row = 0; row < getHeight(); row++) {
             MonospacedGui.move(getX(), getY() + row);
@@ -273,7 +277,7 @@ public abstract class Widget {
         if (showLabel) {
             switch (labelOrientation) {
                 case VERTICAL:
-//          printLabelVertical();
+//                    printLabelVertical();
                     break;
                 case HORIZONTAL:
                     printLabelHorizontal();
@@ -286,6 +290,18 @@ public abstract class Widget {
         printContent();
     }
 
+//    private void printLabelVertical() {
+//        for (var y = 0; y < label.length(); y++) {
+//            switch (labelPosition) {
+//                case TOP, TOP_LEFT, TOP_RIGHT -> MonospacedGui.move(getX(), getY() - y);
+//                case BOTTOM, BOTTOM_LEFT, BOTTOM_RIGHT -> MonospacedGui.move(getX(), getY() + getHeight() - y);
+//                case LEFT, RIGHT -> MonospacedGui.move(getX(), getY() / 2 - y);
+//            }
+//
+//            MonospacedGui.print(getRowForText(label.substring(y, y), labelPosition, labelFormat.getFormatString(), getWidth()));
+//        }
+//    }
+
     private void printLabelHorizontal() {
         switch (labelPosition) {
             case TOP, TOP_LEFT, TOP_RIGHT -> MonospacedGui.move(getX(), getY());
@@ -293,7 +309,7 @@ public abstract class Widget {
             case LEFT, RIGHT -> MonospacedGui.move(getX(), getY() / 2);
         }
 
-        MonospacedGui.print(PrintUtils.getRowForText(label, labelPosition, labelFormat.getFormatString(), getWidth()));
+        MonospacedGui.print(getRowForText(label, labelPosition, labelFormat.getFormatString(), getWidth()));
     }
 
     public void reprint() {

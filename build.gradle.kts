@@ -17,9 +17,12 @@ java {
 }
 
 dependencies {
+    // TODO api probably isn't the right value here :thinking:
     api("dev.verzano.monospaced", "monospaced-core", "0.1.0")
     api("net.java.dev.jna", "jna", "5.6.0")
     api("org.jline", "jline", "3.19.0")
+
+    compileOnly("org.jetbrains", "annotations", "20.1.0")
 
     // Test Dependencies
     testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.6.0")

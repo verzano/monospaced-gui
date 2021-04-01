@@ -1,20 +1,18 @@
-package dev.verzano.monospaced.gui.container.floor;
+package dev.verzano.monospaced.gui;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import dev.verzano.monospaced.gui.MonospacedGui;
-import dev.verzano.monospaced.gui.TerminalTest;
 import org.junit.jupiter.api.Test;
 
-class FloorTest extends TerminalTest {
+class MonospacedGuiContextTerminalTest extends TerminalTest {
     @Test
     void sizeMatchesTerminalSize() {
         final var height = 30;
         final var width = 80;
         setTerminalSize(width, height);
 
-        var floor = MonospacedGui.getFloor();
+        var floor = MonospacedGui.getContext().getFloor();
 
         assertAll(
                 () -> assertEquals(height, floor.getHeight()),
@@ -28,7 +26,7 @@ class FloorTest extends TerminalTest {
         final var width = 80;
         setTerminalSize(width, height);
 
-        var floor = MonospacedGui.getFloor();
+        var floor = MonospacedGui.getContext().getFloor();
 
         assertAll(
                 () -> assertEquals(height, floor.getNeededContentHeight()),
