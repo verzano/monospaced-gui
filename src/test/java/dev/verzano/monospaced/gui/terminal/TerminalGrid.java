@@ -139,7 +139,7 @@ public class TerminalGrid {
                 // TODO-OOOOOOOOOOOOOOOOO
                 resetEscapeMode();
                 break;
-            case 'h', 'l':
+            case 'h', 'l': // don't care about showing/hiding the cursor
                 resetEscapeMode();
                 break;
             default:

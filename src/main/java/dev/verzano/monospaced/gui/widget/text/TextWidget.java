@@ -69,10 +69,35 @@ public class TextWidget extends Widget {
                 }
             }
             case LEFT, CENTER, RIGHT -> {
+                var i = 0;
+                int emptySpace = (getContentHeight() - text.length()) / 2;
+                for (; i < emptySpace; i++) {
+                    MonospacedGui.move(getContentX(), getContentY() + i);
+                    MonospacedGui.print(getEmptyContentRow());
+                }
 
+                for (; i < getContentHeight() - emptySpace; i++) {
+                    MonospacedGui.move(getContentX(), getContentY() + i);
+                    MonospacedGui.print(getRowForText(text.charAt(i - emptySpace) + "", textPosition, getSgrFormatPrefix(), getWidth()));
+                }
+
+                for (; i < getContentHeight(); i++) {
+                    MonospacedGui.move(getContentX(), getContentY() + i);
+                    MonospacedGui.print(getEmptyContentRow());
+                }
             }
             case BOTTOM_LEFT, BOTTOM, BOTTOM_RIGHT -> {
+                var i = 0;
+                int emptySpace = getContentHeight() - text.length();
+                for (; i < emptySpace; i++) {
+                    MonospacedGui.move(getContentX(), getContentY() + i);
+                    MonospacedGui.print(getEmptyContentRow());
+                }
 
+                for (; i < getContentHeight(); i++) {
+                    MonospacedGui.move(getContentX(), getContentY() + i);
+                    MonospacedGui.print(getRowForText(text.charAt(i - emptySpace) + "", textPosition, getSgrFormatPrefix(), getWidth()));
+                }
             }
         }
     }
@@ -89,13 +114,19 @@ public class TextWidget extends Widget {
             }
             case LEFT, CENTER, RIGHT -> {
                 var middleRow = getContentHeight() / 2;
-                for (var i = 0; i < getContentHeight(); i++) {
+                var i = 0;
+                for (; i < middleRow; i++) {
                     MonospacedGui.move(getContentX(), getContentY() + i);
-                    if (i == middleRow) {
-                        MonospacedGui.print(getRowForText(text, textPosition, getSgrFormatPrefix(), getWidth()));
-                    } else {
-                        MonospacedGui.print(getEmptyContentRow());
-                    }
+                    MonospacedGui.print(getEmptyContentRow());
+                }
+
+                MonospacedGui.move(getContentX(), getContentY() + i);
+                MonospacedGui.print(getRowForText(text, textPosition, getSgrFormatPrefix(), getWidth()));
+                i++;
+
+                for (; i < getContentHeight(); i++) {
+                    MonospacedGui.move(getContentX(), getContentY() + i);
+                    MonospacedGui.print(getEmptyContentRow());
                 }
             }
             case BOTTOM_LEFT, BOTTOM, BOTTOM_RIGHT -> {
