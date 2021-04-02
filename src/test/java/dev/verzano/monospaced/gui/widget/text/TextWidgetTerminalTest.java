@@ -21,6 +21,9 @@ import dev.verzano.monospaced.gui.terminal.Tixel;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+// TODO tests for when text is too long
+// TODO tests for when single row (horizontal)
+// TODO tests for when single column (vertical)
 public class TextWidgetTerminalTest extends TerminalTest {
     static Object[][] print() {
         return new Object[][]{
