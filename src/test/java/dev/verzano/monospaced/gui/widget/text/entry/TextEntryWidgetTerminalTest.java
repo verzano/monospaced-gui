@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-// TODO test for when the text scrolls
 class TextEntryWidgetTerminalTest extends TerminalTest {
     static Object[][] typing() {
         String allAsciiChars = Keys.printableAscii().stream()
@@ -21,6 +20,18 @@ class TextEntryWidgetTerminalTest extends TerminalTest {
                 {7, 1, "Hello", toNoStyleGrid(
                         """
                                 Hello \s
+                                """
+                )},
+                {7, 3, "Hello", toNoStyleGrid(
+                        """
+                                      \s
+                                Hello \s
+                                      \s
+                                """
+                )},
+                {5, 1, "Hello", toNoStyleGrid(
+                        """
+                                ello\s
                                 """
                 )},
                 {7, 1, "Hello\u0008\u0008\u0008\u0008\u0008", toNoStyleGrid(
