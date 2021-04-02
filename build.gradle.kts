@@ -17,17 +17,16 @@ java {
 }
 
 dependencies {
-    // TODO api probably isn't the right value here :thinking:
-    api("dev.verzano.monospaced", "monospaced-core", "0.1.0")
-    api("net.java.dev.jna", "jna", "5.6.0")
-    api("org.jline", "jline", "3.19.0")
+    implementation("dev.verzano.monospaced", "monospaced-core", "0.1.0")
+    implementation("net.java.dev.jna", "jna", "5.8.0")
+    implementation("org.jline", "jline-terminal-jna", "3.19.0")
 
     compileOnly("org.jetbrains", "annotations", "20.1.0")
 
     // Test Dependencies
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.6.0")
-    testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.6.0")
-    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.6.0")
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.7.1")
+    testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.7.1")
+    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.7.1")
 }
 
 publishing {

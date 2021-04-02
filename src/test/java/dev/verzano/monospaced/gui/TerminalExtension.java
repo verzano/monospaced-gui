@@ -1,7 +1,8 @@
 package dev.verzano.monospaced.gui;
 
 import dev.verzano.monospaced.gui.lifecycle.LifecycleListenerAdapter;
-import dev.verzano.monospaced.gui.terminal.MockTerminal;
+import dev.verzano.monospaced.gui.terminal.JlineTerminal;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -30,11 +31,11 @@ public class TerminalExtension implements BeforeAllCallback, BeforeEachCallback,
     }
 
     @Override
-    public void beforeEach(ExtensionContext context) throws InterruptedException {
+    public void beforeEach(ExtensionContext context) throws InterruptedException, IOException {
         startupComplete.set(false);
         shutdownComplete.set(false);
 
-        MonospacedGui.startup(MockTerminal.getInstance());
+        MonospacedGui.startup(new JlineTerminal());
 
         while(!startupComplete.get()) {
             Thread.sleep(50);
