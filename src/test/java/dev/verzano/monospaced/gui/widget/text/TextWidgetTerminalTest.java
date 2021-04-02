@@ -11,85 +11,83 @@ import static dev.verzano.monospaced.core.constant.Position.RIGHT;
 import static dev.verzano.monospaced.core.constant.Position.TOP;
 import static dev.verzano.monospaced.core.constant.Position.TOP_LEFT;
 import static dev.verzano.monospaced.core.constant.Position.TOP_RIGHT;
-import static dev.verzano.monospaced.gui.terminal.TixelGridMaker.makeNoStyleTixelGrid;
-import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+import static dev.verzano.monospaced.gui.terminal.TixelUtils.toNoStyleGrid;
 
 import dev.verzano.monospaced.core.constant.Orientation;
 import dev.verzano.monospaced.core.constant.Position;
 import dev.verzano.monospaced.gui.MonospacedGui;
 import dev.verzano.monospaced.gui.TerminalTest;
 import dev.verzano.monospaced.gui.terminal.Tixel;
-import java.time.Duration;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 public class TextWidgetTerminalTest extends TerminalTest {
     static Object[][] print() {
         return new Object[][]{
-                {7, 3, "Hello", HORIZONTAL, CENTER, makeNoStyleTixelGrid(
+                {7, 3, "Hello", HORIZONTAL, CENTER, toNoStyleGrid(
                         """
                                       \s
                                  Hello\s
                                       \s
                                 """
                 )},
-                {7, 3, "Hello", HORIZONTAL, TOP_LEFT, makeNoStyleTixelGrid(
+                {7, 3, "Hello", HORIZONTAL, TOP_LEFT, toNoStyleGrid(
                         """
                                 Hello \s
                                       \s
                                       \s
                                 """
                 )},
-                {7, 3, "Hello", HORIZONTAL, TOP, makeNoStyleTixelGrid(
+                {7, 3, "Hello", HORIZONTAL, TOP, toNoStyleGrid(
                         """
                                  Hello\s
                                       \s
                                       \s
                                 """
                 )},
-                {7, 3, "Hello", HORIZONTAL, TOP_RIGHT, makeNoStyleTixelGrid(
+                {7, 3, "Hello", HORIZONTAL, TOP_RIGHT, toNoStyleGrid(
                         """
                                   Hello
                                       \s
                                       \s
                                 """
                 )},
-                {7, 3, "Hello", HORIZONTAL, RIGHT, makeNoStyleTixelGrid(
+                {7, 3, "Hello", HORIZONTAL, RIGHT, toNoStyleGrid(
                         """
                                       \s
                                   Hello
                                       \s
                                 """
                 )},
-                {7, 3, "Hello", HORIZONTAL, BOTTOM_RIGHT, makeNoStyleTixelGrid(
+                {7, 3, "Hello", HORIZONTAL, BOTTOM_RIGHT, toNoStyleGrid(
                         """
                                       \s
                                       \s
                                   Hello
                                 """
                 )},
-                {7, 3, "Hello", HORIZONTAL, BOTTOM, makeNoStyleTixelGrid(
+                {7, 3, "Hello", HORIZONTAL, BOTTOM, toNoStyleGrid(
                         """
                                       \s
                                       \s
                                  Hello\s
                                 """
                 )},
-                {7, 3, "Hello", HORIZONTAL, BOTTOM_LEFT, makeNoStyleTixelGrid(
+                {7, 3, "Hello", HORIZONTAL, BOTTOM_LEFT, toNoStyleGrid(
                         """
                                       \s
                                       \s
                                 Hello \s
                                 """
                 )},
-                {7, 3, "Hello", HORIZONTAL, LEFT, makeNoStyleTixelGrid(
+                {7, 3, "Hello", HORIZONTAL, LEFT, toNoStyleGrid(
                         """
                                       \s
                                 Hello \s
                                       \s
                                 """
                 )},
-                {3, 7, "Hello", VERTICAL, CENTER, makeNoStyleTixelGrid(
+                {3, 7, "Hello", VERTICAL, CENTER, toNoStyleGrid(
                         """
                                   \s                                
                                  H\s
@@ -100,7 +98,7 @@ public class TextWidgetTerminalTest extends TerminalTest {
                                   \s
                                 """
                 )},
-                {3, 7, "Hello", VERTICAL, TOP_LEFT, makeNoStyleTixelGrid(
+                {3, 7, "Hello", VERTICAL, TOP_LEFT, toNoStyleGrid(
                         """
                                 H \s
                                 e \s
@@ -111,7 +109,7 @@ public class TextWidgetTerminalTest extends TerminalTest {
                                   \s
                                 """
                 )},
-                {3, 7, "Hello", VERTICAL, TOP, makeNoStyleTixelGrid(
+                {3, 7, "Hello", VERTICAL, TOP, toNoStyleGrid(
                         """
                                  H\s
                                  e\s
@@ -122,7 +120,7 @@ public class TextWidgetTerminalTest extends TerminalTest {
                                   \s
                                 """
                 )},
-                {3, 7, "Hello", VERTICAL, TOP_RIGHT, makeNoStyleTixelGrid(
+                {3, 7, "Hello", VERTICAL, TOP_RIGHT, toNoStyleGrid(
                         """
                                   H
                                   e
@@ -133,7 +131,7 @@ public class TextWidgetTerminalTest extends TerminalTest {
                                   \s
                                 """
                 )},
-                {3, 7, "Hello", VERTICAL, RIGHT, makeNoStyleTixelGrid(
+                {3, 7, "Hello", VERTICAL, RIGHT, toNoStyleGrid(
                         """
                                   \s
                                   H
@@ -144,7 +142,7 @@ public class TextWidgetTerminalTest extends TerminalTest {
                                   \s
                                 """
                 )},
-                {3, 7, "Hello", VERTICAL, BOTTOM_RIGHT, makeNoStyleTixelGrid(
+                {3, 7, "Hello", VERTICAL, BOTTOM_RIGHT, toNoStyleGrid(
                         """
                                   \s
                                   \s
@@ -155,7 +153,7 @@ public class TextWidgetTerminalTest extends TerminalTest {
                                   o
                                 """
                 )},
-                {3, 7, "Hello", VERTICAL, BOTTOM, makeNoStyleTixelGrid(
+                {3, 7, "Hello", VERTICAL, BOTTOM, toNoStyleGrid(
                         """
                                   \s
                                   \s
@@ -166,7 +164,7 @@ public class TextWidgetTerminalTest extends TerminalTest {
                                  o\s
                                 """
                 )},
-                {3, 7, "Hello", VERTICAL, BOTTOM_LEFT, makeNoStyleTixelGrid(
+                {3, 7, "Hello", VERTICAL, BOTTOM_LEFT, toNoStyleGrid(
                         """
                                   \s
                                   \s
@@ -177,7 +175,7 @@ public class TextWidgetTerminalTest extends TerminalTest {
                                 o \s
                                 """
                 )},
-                {3, 7, "Hello", VERTICAL, LEFT, makeNoStyleTixelGrid(
+                {3, 7, "Hello", VERTICAL, LEFT, toNoStyleGrid(
                         """
                                   \s
                                 H \s
@@ -193,17 +191,13 @@ public class TextWidgetTerminalTest extends TerminalTest {
 
     @ParameterizedTest
     @MethodSource("print")
-    void print(int width, int height, String text, Orientation orientation, Position position, Tixel[][] tixels) {
+    void print(int width, int height, String text, Orientation orientation, Position position, Tixel[][] expected) {
         setTerminalSize(width, height);
 
         var tw = new TextWidget(text, orientation, position);
         MonospacedGui.setBaseWidget(tw);
         tw.print();
 
-        assertTimeoutPreemptively(Duration.ofMillis(200), () -> {
-            while (getGrid().notSameAs(tixels)) {
-                Thread.sleep(5);
-            }
-        }, "Final grid is:\n" + getGrid().asString());
+        assertTixelEquality(expected);
     }
 }

@@ -1,6 +1,5 @@
 package dev.verzano.monospaced.gui.terminal;
 
-import static dev.verzano.monospaced.core.ansi.sgr.SgrFormat.normalSgrFormat;
 import static java.lang.Integer.parseInt;
 
 import dev.verzano.monospaced.core.ansi.sgr.Attribute;
@@ -11,8 +10,8 @@ import dev.verzano.monospaced.core.constant.Keys;
 import dev.verzano.monospaced.core.metric.Point;
 import dev.verzano.monospaced.core.metric.Size;
 
-public class TerminalGrid {
-    private static final TerminalGrid INSTANCE = new TerminalGrid();
+public class TixelGrid {
+    private static final TixelGrid INSTANCE = new TixelGrid();
 
     private final Point cursorPosition;
     private final SgrFormat currentFormat;
@@ -21,14 +20,18 @@ public class TerminalGrid {
     private String escapeSequence = "";
     private boolean escapedMode = false;
 
-    public static TerminalGrid getInstance() {
+    public static TixelGrid getInstance() {
         return INSTANCE;
     }
 
-    private TerminalGrid() {
-        tixels = new Tixel[4][10];
+    private TixelGrid() {
+        tixels = new Tixel[0][0];
         cursorPosition = new Point(0, 0);
         currentFormat = new SgrFormat(Background.NONE, Foreground.NONE, Attribute.NORMAL);
+    }
+
+    public Tixel[][] getTixels() {
+        return tixels;
     }
 
     public Size getSize() {
@@ -154,6 +157,8 @@ public class TerminalGrid {
     }
 
     public void reset() {
+        tixels = new Tixel[0][0];
+
         cursorPosition.setX(0);
         cursorPosition.setY(0);
 
@@ -161,40 +166,6 @@ public class TerminalGrid {
         currentFormat.setForeground(Foreground.NONE);
         currentFormat.setAttributes(Attribute.NORMAL);
 
-        tixels = new Tixel[0][0];
         resetEscapeMode();
-    }
-
-    public String asString() {
-        StringBuilder sb = new StringBuilder();
-        for (var row : tixels) {
-            for (var t : row) {
-                sb.append(t == null ? normalSgrFormat() + " " + normalSgrFormat() : t.asString());
-            }
-            sb.append('\n');
-        }
-
-        return sb.toString();
-    }
-
-    public boolean notSameAs(Tixel[][] that) {
-        if (that.length != tixels.length || that[0].length != tixels[0].length) {
-            return true;
-        }
-
-        for (var r = 0; r < tixels.length; r++) {
-            for (var c = 0; c < tixels[r].length; c++) {
-                var it = tixels[r][c];
-                var other = that[r][c];
-
-                if (it == null && other != null
-                        || it != null && other == null
-                        || it != null && !other.equals(it)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 }

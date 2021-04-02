@@ -1,7 +1,6 @@
 package dev.verzano.monospaced.gui.terminal;
 
 import dev.verzano.monospaced.core.metric.Size;
-import java.io.IOException;
 import java.util.Deque;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -9,8 +8,8 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class MockTerminal implements Terminal {
     private static final MockTerminal INSTANCE = new MockTerminal();
 
-    private final BlockingDeque<Integer> readBuffer = new LinkedBlockingDeque<>();
-    private final TerminalGrid grid = TerminalGrid.getInstance();
+    private final TixelGrid grid = TixelGrid.getInstance();
+    private BlockingDeque<Integer> readBuffer = new LinkedBlockingDeque<>();
 
     private MockTerminal() {
 
@@ -20,16 +19,11 @@ public class MockTerminal implements Terminal {
         return INSTANCE;
     }
 
-    public void reset() {
-        grid.reset();
-        readBuffer.clear();
-    }
-
     public Deque<Integer> getReadBuffer() {
         return readBuffer;
     }
 
-    public TerminalGrid getGrid() {
+    public TixelGrid getGrid() {
         return grid;
     }
 
@@ -79,7 +73,8 @@ public class MockTerminal implements Terminal {
     }
 
     @Override
-    public void close() throws IOException {
-        // No-Op
+    public void close() {
+        grid.reset();
+        readBuffer = new LinkedBlockingDeque<>();
     }
 }

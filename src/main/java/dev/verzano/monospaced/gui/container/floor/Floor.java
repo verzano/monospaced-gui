@@ -3,8 +3,6 @@ package dev.verzano.monospaced.gui.container.floor;
 import static dev.verzano.monospaced.core.metric.Size.FILL_CONTAINER;
 import static dev.verzano.monospaced.core.metric.Size.FILL_NEEDED;
 
-import dev.verzano.monospaced.core.metric.Point;
-import dev.verzano.monospaced.core.metric.Size;
 import dev.verzano.monospaced.gui.MonospacedGui;
 import dev.verzano.monospaced.gui.container.Container;
 import dev.verzano.monospaced.gui.widget.Widget;
@@ -13,7 +11,10 @@ import java.util.Collections;
 import org.jetbrains.annotations.NotNull;
 
 public class Floor extends Container<FloorOptions> {
-    private FloorOptions options = new FloorOptions(new Size(Size.FILL_CONTAINER, Size.FILL_CONTAINER), new Point(1, 1));
+    @NotNull
+    private FloorOptions options = new FloorOptions();
+
+    @NotNull
     private Widget widget = NULL_WIDGET;
 
     public Floor() {
@@ -64,13 +65,13 @@ public class Floor extends Container<FloorOptions> {
     @Override
     protected void removeWidgetInternal(Widget widget) {
         this.widget = NULL_WIDGET;
-        options = null;
+        options = new FloorOptions();
     }
 
     @Override
     protected void removeWidgetsInternal() {
         widget = NULL_WIDGET;
-        options = null;
+        options  = new FloorOptions();
     }
 
     @Override

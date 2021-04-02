@@ -1,5 +1,9 @@
 package dev.verzano.monospaced.gui.widget.text.entry;
 
+import static dev.verzano.monospaced.core.ansi.sgr.Attribute.BLINK_ON;
+import static dev.verzano.monospaced.core.ansi.sgr.Attribute.UNDERLINE_ON;
+import static dev.verzano.monospaced.core.ansi.sgr.SgrFormat.normalSgrFormat;
+
 import dev.verzano.monospaced.core.ansi.sgr.Attribute;
 import dev.verzano.monospaced.core.ansi.sgr.Background;
 import dev.verzano.monospaced.core.ansi.sgr.Foreground;
@@ -10,22 +14,17 @@ import dev.verzano.monospaced.core.constant.Position;
 import dev.verzano.monospaced.gui.MonospacedGui;
 import dev.verzano.monospaced.gui.widget.text.TextWidget;
 
-import static dev.verzano.monospaced.core.ansi.sgr.Attribute.BLINK_ON;
-import static dev.verzano.monospaced.core.ansi.sgr.Attribute.UNDERLINE_ON;
-import static dev.verzano.monospaced.core.ansi.sgr.SgrFormat.normalSgrFormat;
-
 public class TextEntryWidget extends TextWidget {
     private SgrFormat caretFormat = new SgrFormat(Background.NONE, Foreground.NONE, UNDERLINE_ON, BLINK_ON);
 
     public TextEntryWidget() {
         super("", Orientation.HORIZONTAL, Position.LEFT);
-        // All printable ASCII chars
         Keys.printableAscii().forEach(k -> addKeyAction(k, () -> {
             setText(getText() + k);
             reprint();
         }));
 
-        addKeyAction(Keys.DELETE, () -> {
+        addKeyAction(Keys.BACKSPACE, () -> {
             setText(getText().substring(0, Math.max(0, getText().length() - 1)));
             reprint();
         });

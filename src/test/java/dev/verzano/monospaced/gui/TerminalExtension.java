@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class TerminalExtension implements BeforeAllCallback, BeforeEachCallback, AfterEachCallback, AfterAllCallback {
     @Override
     public void beforeAll(ExtensionContext context) {
+        MonospacedGui.enableLogging(System.out);
     }
 
     @Override
@@ -22,8 +23,12 @@ public class TerminalExtension implements BeforeAllCallback, BeforeEachCallback,
     }
 
     @Override
-    public void afterEach(ExtensionContext context) {
+    public void afterEach(ExtensionContext context) throws InterruptedException {
         MonospacedGui.shutdown();
+
+        while(!MonospacedGui.shutdownComplete()) {
+            Thread.sleep(100);
+        }
     }
 
     @Override

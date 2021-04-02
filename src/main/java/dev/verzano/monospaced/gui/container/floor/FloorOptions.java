@@ -5,27 +5,17 @@ import dev.verzano.monospaced.core.metric.Size;
 import dev.verzano.monospaced.gui.container.ContainerOptions;
 
 public class FloorOptions extends ContainerOptions {
-    private Size size;
-    private Point location;
+    private final Size size = new Size(Size.FILL_CONTAINER, Size.FILL_CONTAINER);
+    private final Point location =  new Point(1, 1);
 
-    public FloorOptions(Size size, Point location) {
-        this.size = size;
-        this.location = location;
+    public FloorOptions() {
     }
 
     public Point getLocation() {
         return location;
     }
 
-    public void setLocation(Point location) {
-        this.location = location;
-    }
-
     public Size getSize() {
         return size;
-    }
-
-    public void setSize(Size size) {
-        this.size = size;
     }
 }

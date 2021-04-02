@@ -1,8 +1,9 @@
 package dev.verzano.monospaced.gui.debug;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,30 +25,32 @@ public class LoggerService {
                     + File.separator + "log"
                     + File.separator + "log.txt");
             logFile.createNewFile();
-
-            new Thread(() -> {
-                try (PrintWriter pw = new PrintWriter(logFile)) {
-                    while (true) {
-                        if (!logQueue.isEmpty()) {
-                            printLog(pw, logQueue.remove());
-                            pw.flush();
-                        } else {
-                            Thread.sleep(50);
-                        }
-                    }
-                } catch (FileNotFoundException | InterruptedException e) {
-                    // TODO where do you log when your logger dies?
-                    e.printStackTrace();
-                }
-            }).start();
-            enabled = true;
+            enable(new FileOutputStream(logFile));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public static void enable(OutputStream os) {
+        new Thread(() -> {
+            try (PrintWriter pw = new PrintWriter(os)) {
+                while (true) {
+                    if (!logQueue.isEmpty()) {
+                        printLog(pw, logQueue.remove());
+                        pw.flush();
+                    } else {
+                        Thread.sleep(50);
+                    }
+                }
+            } catch (InterruptedException e) {
+                // TODO where do you log when your logger dies?
+                e.printStackTrace();
+            }
+        }).start();
+        enabled = true;
+    }
+
     public static Logger getLogger(Class<?> clazz) {
-        // TODO better logger name
         return new Logger(clazz.getSimpleName());
     }
 

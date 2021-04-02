@@ -7,6 +7,7 @@ import dev.verzano.monospaced.gui.terminal.JlineTerminal;
 import dev.verzano.monospaced.gui.terminal.Terminal;
 import dev.verzano.monospaced.gui.widget.Widget;
 import java.io.IOException;
+import java.io.OutputStream;
 
 // TODO use an executor to schedule events
 // TODO add defaults for attributes as well as some css style waterfall thing for getting them
@@ -19,6 +20,10 @@ import java.io.IOException;
 public class MonospacedGui {
     private static MonospacedGuiContext context;
 
+    public static MonospacedGuiContext getContext() {
+        return context;
+    }
+
     public static MonospacedGuiContext startup(Terminal terminal) {
         context = new MonospacedGuiContext(terminal);
         context.startup();
@@ -29,10 +34,6 @@ public class MonospacedGui {
         return startup(new JlineTerminal());
     }
 
-    public static MonospacedGuiContext getContext() {
-        return context;
-    }
-
     public static boolean startupComplete() {
         return context.startupComplete();
     }
@@ -41,8 +42,16 @@ public class MonospacedGui {
         LoggerService.enable();
     }
 
+    public static void enableLogging(OutputStream os) {
+        LoggerService.enable(os);
+    }
+
     public static void shutdown() {
         new Thread(() -> context.shutdown()).start();
+    }
+
+    public static boolean shutdownComplete() {
+        return context.shutdownComplete();
     }
 
     public static void removeFloater() {
