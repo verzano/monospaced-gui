@@ -17,9 +17,8 @@ java {
 }
 
 dependencies {
-    implementation("dev.verzano.monospaced", "monospaced-core", "0.1.0")
-    implementation("net.java.dev.jna", "jna", "5.8.0")
-    implementation("org.jline", "jline-terminal-jna", "3.19.0")
+    api("dev.verzano.monospaced", "monospaced-core", "0.1.0")
+    api("org.jline", "jline-terminal-jna", "3.19.0")
 
     compileOnly("org.jetbrains", "annotations", "20.1.0")
 
