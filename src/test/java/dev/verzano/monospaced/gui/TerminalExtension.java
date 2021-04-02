@@ -16,13 +16,6 @@ public class TerminalExtension implements BeforeAllCallback, BeforeEachCallback,
     @Override
     public void beforeAll(ExtensionContext context) {
         MonospacedGui.enableLogging(System.out);
-    }
-
-    @Override
-    public void beforeEach(ExtensionContext context) throws InterruptedException {
-        startupComplete.set(false);
-        shutdownComplete.set(false);
-
         MonospacedGui.addLifecycleListener(new LifecycleListenerAdapter() {
             @Override
             public void onStartupComplete() {
@@ -34,6 +27,13 @@ public class TerminalExtension implements BeforeAllCallback, BeforeEachCallback,
                 shutdownComplete.set(true);
             }
         });
+    }
+
+    @Override
+    public void beforeEach(ExtensionContext context) throws InterruptedException {
+        startupComplete.set(false);
+        shutdownComplete.set(false);
+
         MonospacedGui.startup(MockTerminal.getInstance());
 
         while(!startupComplete.get()) {
