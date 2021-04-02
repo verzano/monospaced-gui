@@ -12,6 +12,7 @@ import dev.verzano.monospaced.gui.container.floor.FloorOptions;
 import dev.verzano.monospaced.gui.debug.Logger;
 import dev.verzano.monospaced.gui.debug.LoggerService;
 import dev.verzano.monospaced.gui.floater.Floater;
+import dev.verzano.monospaced.gui.lifecycle.LifecycleListener;
 import dev.verzano.monospaced.gui.task.print.PrintTask;
 import dev.verzano.monospaced.gui.terminal.Terminal;
 import dev.verzano.monospaced.gui.widget.Widget;
@@ -31,17 +32,20 @@ public class MonospacedGuiContext {
     private final Thread resizingThread = new Thread(this::resizingLoop, "Resizing");
     private final Terminal terminal;
     private final Size oldSize;
+    private final LifecycleListener lifecycleListener;
 
-    private volatile boolean printingLoopRunning = false;
-    private volatile boolean keyActionLoopRunning = false;
-    private volatile boolean resizingLoopRunning = false;
+    private final AtomicBoolean printingLoopRunning = new AtomicBoolean(false);
+    private final AtomicBoolean keyActionLoopRunning = new AtomicBoolean(false);
+    private final AtomicBoolean resizingLoopRunning = new AtomicBoolean(false);
 
     private Floater floater = Floater.NULL_FLOATER;
     private Widget focusedWidget = Widget.NULL_WIDGET;
 
-    protected MonospacedGuiContext(Terminal terminal) {
+    protected MonospacedGuiContext(Terminal terminal, LifecycleListener lifecycleListener) {
         this.terminal = terminal;
         oldSize = new Size(terminal.getWidth(), terminal.getHeight());
+
+        this.lifecycleListener = lifecycleListener;
     }
 
     protected Floor getFloor() {
@@ -85,32 +89,29 @@ public class MonospacedGuiContext {
         floor.addWidget(baseWidget, new FloorOptions());
     }
 
-    public void startup() {
-        log.log("Startup running");
+    protected void startup() {
+        log.log("Startup running...");
         printingThread.start();
         keyActionThread.start();
         resizingThread.start();
 
         printTaskQueue.addFirst(() -> print(HCU.apply()));
-        log.log("Startup complete");
     }
 
-    public boolean startupComplete() {
-        return printingLoopRunning
-                && keyActionLoopRunning
-                && resizingLoopRunning;
-    }
-
-    public boolean shutdownComplete() {
-        return !printingLoopRunning
-                && !keyActionLoopRunning
-                && !resizingLoopRunning;
+    private synchronized void checkStartupComplete() {
+        if (printingLoopRunning.get()
+                && keyActionLoopRunning.get()
+                && resizingLoopRunning.get()) {
+            log.log("Startup complete!");
+            lifecycleListener.onStartupComplete();
+        }
     }
 
     private void keyActionLoop() {
         try {
-            keyActionLoopRunning = true;
-            log.log("Key Action Loop running");
+            keyActionLoopRunning.set(true);
+            log.log("Key Action Loop running...");
+            checkStartupComplete();
 
             while (run.get()) {
                 var key = terminal.read();
@@ -132,7 +133,10 @@ public class MonospacedGuiContext {
                 }
             }
         } catch (IOException e) {
-            keyActionLoopRunning = false;
+            // TODO try and restart when this happens
+            keyActionLoopRunning.set(false);
+            log.log("Key Action Loop stopped suddenly");
+            checkShutdownComplete();
             throw new RuntimeException(e);
         }
     }
@@ -181,8 +185,9 @@ public class MonospacedGuiContext {
     private void printingLoop() {
         clear();
 
-        printingLoopRunning = true;
-        log.log("Printing Loop running");
+        printingLoopRunning.set(true);
+        log.log("Printing Loop running...");
+        checkStartupComplete();
 
         while (run.get()) {
             try {
@@ -208,8 +213,9 @@ public class MonospacedGuiContext {
     }
 
     private void resizingLoop() {
-        resizingLoopRunning = true;
-        log.log("Resizing Loop started");
+        resizingLoopRunning.set(true);
+        log.log("Resizing Loop running...");
+        checkStartupComplete();
 
         while (run.get()) {
             if (!oldSize.equals(getSize())) {
@@ -236,8 +242,8 @@ public class MonospacedGuiContext {
         terminal.flush();
     }
 
-    public void shutdown() {
-        log.log("Shutdown started");
+    protected void shutdown() {
+        log.log("Shutdown running...");
         printTaskQueue.addFirst(() -> print(SCU.apply()));
         printTaskQueue.addFirst(() -> run.set(false));
 
@@ -245,24 +251,27 @@ public class MonospacedGuiContext {
             printingThread.join(200);
         } catch (InterruptedException ignored) {
         } finally {
-            printingLoopRunning = false;
+            printingLoopRunning.set(false);
             log.log("Printing Loop stopped");
+            checkShutdownComplete();
         }
 
         try {
             keyActionThread.join(200);
         } catch (InterruptedException ignored) {
         } finally {
-            keyActionLoopRunning = false;
+            keyActionLoopRunning.set(false);
             log.log("Key Action Loop stopped");
+            checkShutdownComplete();
         }
 
         try {
             resizingThread.join(200);
         } catch (InterruptedException ignored) {
         } finally {
-            resizingLoopRunning = false;
+            resizingLoopRunning.set(false);
             log.log("Resizing Loop stopped");
+            checkShutdownComplete();
         }
 
         try {
@@ -270,7 +279,14 @@ public class MonospacedGuiContext {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
-        log.log("Shutdown complete");
+    private synchronized void checkShutdownComplete() {
+        if (!printingLoopRunning.get()
+                && !keyActionLoopRunning.get()
+                && !resizingLoopRunning.get()) {
+            log.log("Shutdown complete!");
+            lifecycleListener.onShutdownComplete();
+        }
     }
 }

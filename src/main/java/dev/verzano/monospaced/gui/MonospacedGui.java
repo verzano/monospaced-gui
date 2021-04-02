@@ -1,13 +1,18 @@
 package dev.verzano.monospaced.gui;
 
+import dev.verzano.monospaced.gui.debug.Logger;
 import dev.verzano.monospaced.gui.debug.LoggerService;
 import dev.verzano.monospaced.gui.floater.Floater;
+import dev.verzano.monospaced.gui.lifecycle.LifecycleListener;
+import dev.verzano.monospaced.gui.lifecycle.LifecycleListenerAdapter;
 import dev.verzano.monospaced.gui.task.print.PrintTask;
 import dev.verzano.monospaced.gui.terminal.JlineTerminal;
 import dev.verzano.monospaced.gui.terminal.Terminal;
 import dev.verzano.monospaced.gui.widget.Widget;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 // TODO use an executor to schedule events
 // TODO add defaults for attributes as well as some css style waterfall thing for getting them
@@ -18,40 +23,75 @@ import java.io.OutputStream;
 // TODO allow resize events to be grouped together
 // TODO foreground/background can be inherited from parent
 public class MonospacedGui {
+    private static final Logger log = LoggerService.getLogger(MonospacedGui.class);
+    private static final Set<LifecycleListener> lifecycleListeners = new HashSet<>();
+
     private static MonospacedGuiContext context;
 
     public static MonospacedGuiContext getContext() {
         return context;
     }
 
-    public static MonospacedGuiContext startup(Terminal terminal) {
-        context = new MonospacedGuiContext(terminal);
+    public static void startup(Terminal terminal) {
+        lifecycleListeners.forEach(LifecycleListener::onStartupStart);
+
+        context = new MonospacedGuiContext(
+                terminal,
+                new LifecycleListenerAdapter() {
+                    @Override
+                    public void onStartupComplete() {
+                        lifecycleListeners.forEach(LifecycleListener::onStartupComplete);
+                    }
+
+                    @Override
+                    public void onShutdownComplete() {
+                        lifecycleListeners.forEach(LifecycleListener::onShutdownComplete);
+                    }
+                });
         context.startup();
-        return context;
     }
 
-    public static MonospacedGuiContext startup() throws IOException {
-        return startup(new JlineTerminal());
+    public static void startup() throws IOException {
+        startup(new JlineTerminal());
     }
 
-    public static boolean startupComplete() {
-        return context.startupComplete();
-    }
+    public static void shutdown() {
+        lifecycleListeners.forEach(LifecycleListener::onShutdownStart);
 
-    public static void enableLogging() {
-        LoggerService.enable();
+        new Thread(() -> context.shutdown()).start();
     }
 
     public static void enableLogging(OutputStream os) {
         LoggerService.enable(os);
+        addLifecycleListener(new LifecycleListener() {
+            @Override
+            public void onStartupStart() {
+                log.log("Startup running...");
+            }
+
+            @Override
+            public void onStartupComplete() {
+                log.log("Startup complete!");
+            }
+
+            @Override
+            public void onShutdownStart() {
+                log.log("Shutdown running...");
+            }
+
+            @Override
+            public void onShutdownComplete() {
+                log.log("Shutdown complete!");
+            }
+        });
     }
 
-    public static void shutdown() {
-        new Thread(() -> context.shutdown()).start();
+    public static void addLifecycleListener(LifecycleListener lifecycleListener) {
+        lifecycleListeners.add(lifecycleListener);
     }
 
-    public static boolean shutdownComplete() {
-        return context.shutdownComplete();
+    public static void removeLifecycleListener(LifecycleListener lifecycleListener) {
+        lifecycleListeners.remove(lifecycleListener);
     }
 
     public static void removeFloater() {
